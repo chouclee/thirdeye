@@ -40,7 +40,7 @@ import { notifyIfErrors } from "../../utils/notifications/notifications.util";
 import { getErrorMessages } from "../../utils/rest/rest.util";
 import { getAlertTemplatesViewPath } from "../../utils/routes/routes.util";
 
-export const AlertTemplatesCreatePage: FunctionComponent = () => {
+export const AlertTemplatesCreatePage: FunctionComponent = ()=> {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const { notify } = useNotificationProviderV1();
