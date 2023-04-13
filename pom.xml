@@ -75,9 +75,11 @@
     <guice.version>4.2.3</guice.version>
     <hsqldb.version>2.7.0</hsqldb.version>
     <jackson.version>2.10.5</jackson.version>
+    <javax.inject.version>1</javax.inject.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
     <jodatime.version>2.7</jodatime.version>
     <json-schema-validator.version>2.2.14</json-schema-validator.version>
+    <jsr305.version>3.0.2</jsr305.version>
     <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
     <mockito.version>4.3.1</mockito.version>
     <modelmapper.version>3.1.0</modelmapper.version>
@@ -94,6 +96,7 @@
     <swagger-annotation.version>1.6.0</swagger-annotation.version>
     <swagger.version>2.0.0-1</swagger.version>
     <testcontainers.version>1.15.3</testcontainers.version>
+    <tomcat-jdbc.version>9.0.65</tomcat-jdbc.version>
   </properties>
 
   <licenses>
@@ -218,11 +221,11 @@
           </executions>
         </plugin>
         <plugin>
-          <!-- download weaver jar - required for surefire goals-->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>3.3.0</version>
           <executions>
+            <!-- download weaver jar - required for surefire goals-->
             <execution>
               <id>resolve</id>
               <phase>validate</phase>
@@ -233,6 +236,29 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
+              </configuration>
+            </execution>
+            <!-- failing build on dependency analysis warnings -->
+            <execution>
+              <id>analyze</id>
+              <goals>
+                <goal>analyze-only</goal>
+              </goals>
+              <configuration>
+                <ignoredDependencies>
+                  <!-- thirdeye-persistence -->
+                  <ignoredDependency>mysql:mysql-connector-java:jar:*</ignoredDependency>
+                  <ignoredDependency>org.flywaydb:flyway-mysql:*</ignoredDependency>
+                  <ignoredDependency>org.testcontainers:testcontainers:*</ignoredDependency>
+                  <ignoredDependency>org.aspectj:aspectjweaver:*</ignoredDependency>
+
+                </ignoredDependencies>
+                
+                <!-- workaround for https://issues.apache.org/jira/browse/MDEP-791 -->
+                <ignoredNonTestScopedDependencies>
+                  <ignoredNonTestScopedDependency>*</ignoredNonTestScopedDependency>
+                </ignoredNonTestScopedDependencies>
+                <failOnWarning>true</failOnWarning>
               </configuration>
             </execution>
           </executions>
@@ -571,6 +597,11 @@
         <version>4.5.9</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jdbc</artifactId>
+        <version>${tomcat-jdbc.version}</version>
+     </dependency>
+      <dependency>
         <groupId>com.sendgrid</groupId>
         <artifactId>sendgrid-java</artifactId>
         <version>${sendgrid.version}</version>
@@ -814,6 +845,18 @@
         <version>${freemarker.version}</version>
       </dependency>
 
+      <!-- annotations  -->
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>${jsr305.version}</version>
+     </dependency>
+    <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax.inject.version}</version>
+     </dependency>
+
       <!-- database -->
       <dependency>
         <groupId>mysql</groupId>
@@ -850,6 +893,11 @@
       <dependency>
         <groupId>org.apache.calcite</groupId>
         <artifactId>calcite-babel</artifactId>
+        <version>${calcite.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.calcite</groupId>
+        <artifactId>calcite-linq4j</artifactId>
         <version>${calcite.version}</version>
       </dependency>
 
